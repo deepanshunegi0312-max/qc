@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#080810">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CMA Quest">
+<meta name="description" content="CMA Inter Group 1 Study RPG — Catch topics, battle questions, earn badges. June 2026.">
+<title>CMA Quest — Study RPG</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<style>
+:root{
+  --y4:#ffd700;--y3:#daa520;--y2:#8a6000;--y1:#3a2a00;
+  --g4:#5a9a5a;--g3:#3a6a3a;--g2:#2a4a2a;--g1:#1a2a1a;
+  --r4:#ff4444;--r3:#cc2222;--r2:#8a1a1a;--r1:#3a0a0a;
+  --b4:#8a8aff;--b3:#4a4aaa;--b2:#2a2a6a;--b1:#1a1a3a;
+  --w:#f0f0e0;--mu:#7a7a6a;--bg:#080810;
+  --hg:#44cc44;--hy:#ddcc00;--hr:#cc2222;
+  --F:'Press Start 2P',monospace;--FB:'VT323',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-family:var(--F);position:fixed;top:0;left:0;}
+.screen{display:none;position:absolute;inset:0;flex-direction:column;overflow:hidden;}
+.screen.on{display:flex;}
+.scroll{overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch;}
+
+/* ── STARS ── */
+.star{position:fixed;background:#fff;border-radius:50%;pointer-events:none;z-index:0;}
+@keyframes tw{0%,100%{opacity:.15}50%{opacity:.8}}
+@keyframes fl{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes pp{0%{transform:scale(.3);opacity:0}60%{transform:scale(1.2)}100%{transform:scale(1);opacity:1}}
+@keyframes sp{0%{transform:scale(0) rotate(0deg);opacity:1}100%{transform:scale(1.8) rotate(180deg);opacity:0}}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:0}}
+
+/* ── TOPBAR ── */
+.topbar{background:#050508;border-bottom:3px solid var(--y3);padding:8px 12px;display:flex;align-items:center;gap:8px;flex-shrink:0;z-index:10;}
+.topbar-title{font-size:8px;color:var(--y4);letter-spacing:2px;flex:1;}
+.tb-btn{background:var(--r1);border:2px solid var(--r3);color:var(--r4);font-family:var(--F);font-size:7px;padding:10px 14px;border-radius:2px;min-height:44px;min-width:56px;touch-action:manipulation;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.tb-btn:active{opacity:.7;}
+.tb-btn.g{background:var(--g1);border-color:var(--g3);color:var(--g4);}
+
+/* ════════════════════════════════
+   HOME SCREEN
+════════════════════════════════ */
+#homeScreen{background:linear-gradient(180deg,#04040f,#060a1a 50%,#030c04);}
+.h-hero{text-align:center;padding:20px 16px 12px;border-bottom:3px solid var(--y3);flex-shrink:0;position:relative;z-index:1;}
+.h-logo{font-size:clamp(12px,3.5vw,19px);color:var(--y4);text-shadow:3px 3px 0 var(--y2),0 0 20px var(--y4);letter-spacing:3px;line-height:1.7;}
+.h-sub{font-family:var(--FB);font-size:clamp(14px,3vw,18px);color:var(--g4);letter-spacing:3px;margin-top:3px;}
+.h-mascot{display:inline-block;animation:fl 3s ease-in-out infinite;margin:6px 0;}
+.h-cd{background:rgba(180,30,30,.2);border:1px solid rgba(200,50,50,.4);padding:5px 12px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;position:relative;z-index:1;}
+.h-cd-lbl{font-size:7px;color:#ff8888;}
+.h-cd-num{font-size:16px;color:#ff4444;font-weight:bold;font-family:var(--FB);}
+.h-stats{display:flex;gap:5px;padding:7px 12px;background:rgba(0,0,0,.6);border-bottom:2px solid #0d0d18;flex-wrap:wrap;flex-shrink:0;position:relative;z-index:1;}
+.h-pill{display:flex;align-items:center;gap:3px;background:rgba(255,215,0,.07);border:1px solid rgba(255,215,0,.2);border-radius:3px;padding:4px 7px;font-size:6px;color:var(--y4);}
+.h-badges{display:flex;gap:8px;padding:7px 12px;flex-wrap:wrap;flex-shrink:0;border-bottom:1px solid #111;position:relative;z-index:1;}
+.badge{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;border:3px solid #333;background:#111;flex-direction:column;}
+.badge.on{border-color:var(--y3);background:var(--y1);}
+.badge-lbl{font-size:4px;color:var(--mu);margin-top:2px;text-align:center;max-width:44px;}
+.h-prog{padding:7px 12px 4px;flex-shrink:0;position:relative;z-index:1;}
+.h-prog-lbl{font-size:6px;color:var(--mu);display:flex;justify-content:space-between;margin-bottom:3px;}
+.h-prog-bg{height:8px;background:#111;border:2px solid #1a1a1a;overflow:hidden;}
+.h-prog-fill{height:100%;background:linear-gradient(90deg,var(--g3),var(--y3));transition:width .6s;}
+.h-sec{padding:8px 12px 3px;position:relative;z-index:1;}
+.h-sec-hdr{font-size:7px;color:var(--y3);letter-spacing:2px;margin-bottom:8px;display:flex;align-items:center;gap:5px;}
+.h-sec-hdr::before{content:'►';color:var(--y4);}
+/* Task cards */
+.tc{background:rgba(0,15,0,.7);border:2px solid var(--g2);border-radius:3px;padding:10px;margin-bottom:6px;display:flex;align-items:flex-start;gap:8px;min-height:50px;touch-action:manipulation;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.tc:active{border-color:var(--y4);}
+.tc.done{border-color:#0f1f0f;opacity:.5;}
+.tc.done .tc-txt{text-decoration:line-through;color:var(--mu);}
+.tc-chk{width:16px;height:16px;border:2px solid var(--g3);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;margin-top:1px;}
+.tc.done .tc-chk{background:var(--g3);border-color:var(--g4);}
+.tc-body{flex:1;}
+.tc-txt{font-family:var(--FB);font-size:clamp(13px,2.6vw,16px);color:var(--w);line-height:1.4;}
+.tc-meta{font-size:5px;color:var(--mu);margin-top:2px;}
+.tc-hot{font-size:5px;padding:2px 5px;border-radius:2px;background:rgba(255,215,0,.12);color:var(--y4);border:1px solid var(--y2);flex-shrink:0;}
+.tc-opt{font-size:5px;padding:2px 5px;border-radius:2px;background:rgba(200,40,40,.12);color:#F09595;border:1px solid var(--r2);flex-shrink:0;}
+/* Menu buttons */
+.h-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px 12px;position:relative;z-index:1;}
+.hbtn{background:rgba(0,0,0,.8);border:3px solid var(--g3);border-radius:4px;padding:14px 8px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:5px;min-height:80px;touch-action:manipulation;cursor:pointer;-webkit-tap-highlight-color:transparent;width:100%;}
+.hbtn:active{border-color:var(--y4);transform:scale(.96);}
+.hbtn.full{grid-column:1/-1;}
+.hbtn.gold{border-color:var(--y3);}
+.hbtn-ic{font-size:24px;}
+.hbtn-lbl{font-size:7px;color:var(--w);letter-spacing:1px;}
+.hbtn-sub{font-family:var(--FB);font-size:13px;color:var(--mu);}
+
+/* ════════════════════════════════
+   OVERWORLD MAP
+════════════════════════════════ */
+#owScreen{background:#060d06;}
+#mapCanvas{flex:1;width:100%;display:block;touch-action:manipulation;cursor:pointer;}
+.ow-foot{background:#050508;border-top:3px solid var(--y3);padding:6px 10px;display:flex;gap:6px;justify-content:center;flex-shrink:0;}
+.ow-btn{background:var(--g1);border:2px solid var(--g3);color:var(--g4);font-family:var(--F);font-size:7px;padding:10px 14px;border-radius:2px;min-height:44px;touch-action:manipulation;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.ow-btn:active{border-color:var(--y4);color:var(--y4);}
+
+/* ════════════════════════════════
+   BATTLE SCREEN
+════════════════════════════════ */
+#battleScreen{background:#08081a;}
+.btl-scene{height:42vh;min-height:210px;max-height:290px;position:relative;display:flex;flex-direction:column;flex-shrink:0;}
+.btl-bg{position:absolute;inset:0;}
+.e-area{position:relative;flex:1;padding:10px 12px 4px;}
+.e-box{background:rgba(0,0,0,.75);border:3px solid var(--w);border-radius:3px;padding:8px 10px;max-width:210px;}
+.e-name{font-size:7px;color:var(--w);margin-bottom:5px;text-transform:uppercase;}
+.hp-row{display:flex;align-items:center;gap:6px;}
+.hp-lbl{font-size:6px;color:var(--w);}
+.hp-bg{flex:1;height:7px;background:#222;border:1px solid #444;}
+.hp-fill{height:100%;transition:width .3s,background .3s;}
+.e-spr{position:absolute;right:14px;top:8px;}
+.p-area{padding:5px 12px 0;display:flex;justify-content:flex-end;position:relative;}
+.p-box{background:rgba(0,0,0,.75);border:3px solid var(--w);border-radius:3px;padding:8px 10px;max-width:185px;}
+.p-name{font-size:6px;color:var(--w);margin-bottom:4px;}
+.p-spr{position:absolute;left:12px;bottom:4px;}
+.xp-row{background:#050508;border-top:2px solid #111;padding:4px 10px;display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.xp-bg{flex:1;height:4px;background:#0a0a0a;border:1px solid #1a1a1a;}
+.xp-fill{height:100%;background:var(--y3);transition:width .5s;}
+.xp-lbl{font-size:6px;color:var(--y3);}
+.btl-bot{background:#0e0e22;border-top:4px solid var(--w);flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden;}
+.dlg{padding:8px 12px;min-height:56px;max-height:80px;border-bottom:2px solid #1a1a2a;overflow:hidden;}
+.dlg-qn{font-size:6px;color:var(--mu);margin-bottom:2px;}
+.dlg-txt{font-family:var(--FB);font-size:clamp(14px,2.8vw,18px);color:var(--w);line-height:1.5;}
+.opts{display:grid;grid-template-columns:1fr 1fr;flex:1;min-height:0;}
+.opt{background:#08082a;border:2px solid #1a1a2a;padding:10px;display:flex;align-items:center;gap:7px;min-height:54px;touch-action:manipulation;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.opt:active{background:#1a1a4a;}
+.opt.ok{background:#082a08;border-color:var(--g4);}
+.opt.ng{background:#2a0808;border-color:var(--r4);}
+.opt-k{font-size:8px;color:var(--y4);min-width:16px;flex-shrink:0;}
+.opt-t{font-family:var(--FB);font-size:clamp(12px,2.4vw,15px);color:var(--w);line-height:1.3;}
+.btl-skip-row{padding:6px 10px;background:#050508;border-top:2px solid #111;flex-shrink:0;display:none;}
+.skip-btn{background:var(--b1);border:2px solid var(--b3);color:var(--b4);font-family:var(--F);font-size:7px;padding:8px 14px;min-height:38px;touch-action:manipulation;cursor:pointer;border-radius:2px;width:100%;}
+.skip-btn:active{opacity:.7;}
+/* catch */
+.catch-layer{position:absolute;inset:0;background:rgba(0,0,0,.88);display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;z-index:20;}
+.catch-layer.on{display:flex;}
+.catch-ic{font-size:52px;animation:pp .5s ease-out;}
+.catch-txt{font-size:9px;color:var(--y4);text-align:center;line-height:1.8;font-family:var(--F);}
+.sparkle{position:absolute;pointer-events:none;font-size:20px;animation:sp .8s ease-out forwards;}
+
+/* ════════════════════════════════
+   POKEDEX
+════════════════════════════════ */
+#dexScreen{background:#06060e;}
+.dex-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;padding:12px;}
+.dc{background:var(--g1);border:2px solid var(--g2);border-radius:3px;padding:8px 6px;text-align:center;touch-action:manipulation;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.dc:active{border-color:var(--y4);}
+.dc.caught{border-color:var(--g4);background:var(--g2);}
+.dc.boss-c{border-color:var(--y3);background:var(--y1);}
+.dc.skipped{border-color:#1a1a0a;opacity:.5;}
+.dc-num{font-size:5px;color:var(--mu);margin-bottom:4px;}
+.dc-name{font-family:var(--FB);font-size:12px;color:var(--w);margin-top:4px;line-height:1.3;}
+.dc-st{font-size:5px;margin-top:2px;}
+
+/* ════════════════════════════════
+   RESULT
+════════════════════════════════ */
+#resultScreen{background:#06060e;align-items:center;justify-content:center;gap:12px;padding:20px;}
+.res-ic{font-size:60px;}
+.res-ttl{font-size:clamp(8px,2.3vw,12px);text-align:center;}
+.res-xp{font-family:var(--FB);font-size:22px;color:var(--y4);}
+.res-msg{font-family:var(--FB);font-size:clamp(14px,2.7vw,17px);color:var(--w);text-align:center;max-width:320px;line-height:1.55;}
+.res-btn{background:var(--y2);border:3px solid var(--y4);color:var(--y4);font-family:var(--F);font-size:8px;padding:12px 20px;touch-action:manipulation;cursor:pointer;margin-top:5px;}
+.res-btn:active{opacity:.7;}
+
+/* ════════════════════════════════
+   PROF OAK
+════════════════════════════════ */
+#oakScreen{background:#06060e;}
+.oak-hero{background:linear-gradient(135deg,#0a1a0a,#0a0a2a);border-bottom:3px solid var(--y3);padding:14px;text-align:center;flex-shrink:0;}
+.oak-ic{font-size:54px;display:block;animation:fl 3s ease-in-out infinite;margin:4px 0;}
+.oak-ttl{font-size:9px;color:var(--y4);}
+.oak-sub{font-family:var(--FB);font-size:15px;color:var(--g4);}
+.oak-body{padding:12px;}
+.oak-hdr{font-size:7px;color:var(--y3);letter-spacing:2px;margin-bottom:7px;display:flex;align-items:center;gap:5px;}
+.oak-hdr::before{content:'►';color:var(--y4);}
+.oak-upload{background:rgba(0,40,0,.4);border:2px dashed var(--g3);border-radius:6px;padding:18px;text-align:center;touch-action:manipulation;cursor:pointer;-webkit-tap-highlight-color:transparent;margin-bottom:8px;}
+.oak-upload:active{border-color:var(--y4);}
+.oak-upload-ic{font-size:30px;margin-bottom:6px;}
+.oak-upload-txt{font-family:var(--FB);font-size:15px;color:var(--g4);}
+.oak-upload-sub{font-size:6px;color:var(--mu);margin-top:3px;}
+#oakImg{width:100%;border-radius:4px;margin-top:8px;display:none;max-height:180px;object-fit:contain;border:2px solid var(--g3);}
+.oak-ask-btn{width:100%;background:var(--y2);border:3px solid var(--y4);color:var(--y4);font-family:var(--F);font-size:8px;padding:11px;touch-action:manipulation;cursor:pointer;margin-top:8px;display:none;border-radius:2px;}
+.oak-ask-btn:active{opacity:.7;}
+.oak-loading{text-align:center;padding:14px;display:none;}
+.oak-loading-txt{font-family:var(--FB);font-size:16px;color:var(--y4);animation:bl 1s infinite;}
+.oak-ans{background:rgba(0,0,0,.6);border:2px solid var(--g3);border-radius:4px;padding:12px;margin-top:10px;display:none;}
+.oak-ans-hdr{font-size:7px;color:var(--y4);margin-bottom:5px;}
+.oak-ans-txt{font-family:var(--FB);font-size:clamp(14px,2.8vw,17px);color:var(--w);line-height:1.6;white-space:pre-wrap;}
+.qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.qa-btn{background:rgba(0,30,0,.7);border:2px solid var(--g2);border-radius:4px;padding:10px 8px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px;touch-action:manipulation;cursor:pointer;-webkit-tap-highlight-color:transparent;width:100%;}
+.qa-btn:active{border-color:var(--y4);}
+.qa-ic{font-size:20px;}
+.qa-lbl{font-size:6px;color:var(--w);}
+.oak-tip{background:rgba(0,20,0,.5);border:1px solid var(--g2);border-radius:4px;padding:9px;margin-bottom:7px;}
+.oak-tip-ttl{font-size:7px;color:var(--y3);margin-bottom:4px;}
+.oak-tip-body{font-family:var(--FB);font-size:14px;color:var(--w);line-height:1.5;}
+
+/* ════════════════════════════════
+   FLEE OVERLAY
+════════════════════════════════ */
+#fleeBox{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:800;display:none;align-items:center;justify-content:center;padding:20px;}
+#fleeBox.on{display:flex;}
+.flee-inner{background:#0d0d20;border:3px solid var(--y3);border-radius:6px;padding:22px 18px;width:100%;max-width:300px;text-align:center;}
+.flee-ttl{font-size:10px;color:var(--y4);margin-bottom:8px;line-height:1.7;}
+.flee-sub{font-family:var(--FB);font-size:16px;color:var(--w);margin-bottom:18px;line-height:1.5;}
+.flee-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.flee-yes{background:var(--r1);border:2px solid var(--r3);color:var(--r4);font-family:var(--F);font-size:8px;padding:12px 6px;touch-action:manipulation;cursor:pointer;border-radius:2px;}
+.flee-yes:active{opacity:.7;}
+.flee-no{background:var(--g1);border:2px solid var(--g3);color:var(--g4);font-family:var(--F);font-size:8px;padding:12px 6px;touch-action:manipulation;cursor:pointer;border-radius:2px;}
+.flee-no:active{opacity:.7;}
+
+/* ════════════════════════════════
+   TOAST + MUTE
+════════════════════════════════ */
+#toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%) translateY(120px);background:#050508;border:3px solid var(--y4);border-radius:3px;padding:9px 16px;font-family:var(--FB);font-size:18px;color:var(--y4);z-index:9999;transition:transform .4s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;max-width:90vw;text-align:center;pointer-events:none;}
+#toast.on{transform:translateX(-50%) translateY(0);}
+#muteBtn{position:fixed;top:6px;right:8px;z-index:200;background:rgba(0,0,0,.7);border:1px solid var(--y2);color:var(--y3);font-size:14px;padding:6px 9px;border-radius:3px;touch-action:manipulation;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+#fileInput{display:none;}
+</style>
+</head>
+<body>
+<div id="stars"></div>
+<button id="muteBtn">🔊</button>
+<input type="file" id="fileInput" accept="image/*" capture="environment">
+
+<!-- HOME -->
+<div id="homeScreen" class="screen on">
+  <div class="h-hero" style="position:relative;z-index:1;">
+    <div class="h-logo">⚔ CMA QUEST ⚔</div>
+    <div class="h-sub">STUDY RPG · JUNE 2026</div>
+    <div class="h-mascot" id="hMascot"></div>
+  </div>
+  <div class="h-cd">
+    <div class="h-cd-lbl">⏰ EXAM COUNTDOWN</div>
+    <div><span class="h-cd-num" id="cdDays">--</span> <span style="font-size:7px;color:#ff8888">DAYS LEFT</span></div>
+  </div>
+  <div class="h-stats">
+    <div class="h-pill">📅 Day <span id="msDay">1</span></div>
+    <div class="h-pill">🎯 <span id="msCaught">0</span> Caught</div>
+    <div class="h-pill">⭐ <span id="msXp">0</span> XP</div>
+    <div class="h-pill">🔥 <span id="msStreak">0</span> Streak</div>
+  </div>
+  <div class="h-badges" id="badgesRow"></div>
+  <div class="scroll">
+    <div class="h-prog">
+      <div class="h-prog-lbl"><span>TOPIC DEX PROGRESS</span><span id="progTxt">0/0</span></div>
+      <div class="h-prog-bg"><div class="h-prog-fill" id="progFill" style="width:0%"></div></div>
+    </div>
+    <div class="h-sec">
+      <div class="h-sec-hdr">TODAY'S MISSIONS</div>
+      <div id="todayTasks"></div>
+    </div>
+    <div class="h-btns">
+      <button class="hbtn full gold" id="btnMap"><div class="hbtn-ic">🗺</div><div class="hbtn-lbl">ADVENTURE MAP</div><div class="hbtn-sub">Enter zones &amp; catch topics</div></button>
+      <button class="hbtn" id="btnDex"><div class="hbtn-ic">📖</div><div class="hbtn-lbl">TOPIC DEX</div><div class="hbtn-sub">All caught topics</div></button>
+      <button class="hbtn" id="btnQuick"><div class="hbtn-ic">⚔</div><div class="hbtn-lbl">QUICK BATTLE</div><div class="hbtn-sub">Fight next topic now</div></button>
+      <button class="hbtn" id="btnOak" style="border-color:#5DCAA5"><div class="hbtn-ic">🎓</div><div class="hbtn-lbl">PROF. OAK AI</div><div class="hbtn-sub">AI answers your questions</div></button>
+    </div>
+    <div style="height:20px"></div>
+  </div>
+</div>
+
+<!-- OVERWORLD -->
+<div id="owScreen" class="screen">
+  <div class="topbar">
+    <button class="tb-btn" id="btnOwBack">◄ HOME</button>
+    <div class="topbar-title">🗺 ADVENTURE MAP</div>
+    <button class="tb-btn g" id="btnOwDex">📖 DEX</button>
+  </div>
+  <canvas id="mapCanvas"></canvas>
+  <div class="ow-foot">
+    <button class="ow-btn" id="btnOwHome">🏠</button>
+    <button class="ow-btn" id="btnOwDex2">📖 DEX</button>
+    <button class="ow-btn" id="btnOwQuick">⚔ QUICK</button>
+    <button class="ow-btn" id="btnOwOak">🎓 OAK</button>
+  </div>
+</div>
+
+<!-- BATTLE -->
+<div id="battleScreen" class="screen">
+  <div class="topbar">
+    <button class="tb-btn" id="btnBtlBack">✕ BACK</button>
+    <div class="topbar-title" id="btlTitle">BATTLE</div>
+    <div style="font-size:6px;color:var(--y3)" id="btlHdr">0/0</div>
+  </div>
+  <div class="btl-scene">
+    <div class="btl-bg" id="btlBg"></div>
+    <div class="e-area">
+      <div class="e-box"><div class="e-name" id="eName">???</div>
+        <div class="hp-row"><div class="hp-lbl">HP</div><div class="hp-bg" style="flex:1"><div class="hp-fill" id="eHp" style="width:100%;background:var(--hg)"></div></div></div>
+      </div>
+      <div class="e-spr" id="eSpr"></div>
+    </div>
+    <div class="p-area">
+      <div class="p-box"><div class="p-name">TRAINER</div>
+        <div class="hp-row"><div class="hp-lbl">HP</div><div class="hp-bg" style="flex:1"><div class="hp-fill" id="pHp" style="width:100%;background:var(--hg)"></div></div></div>
+      </div>
+      <div class="p-spr" id="pSpr"></div>
+    </div>
+    <div class="catch-layer" id="catchLayer">
+      <div class="catch-ic" id="catchIc">🎯</div>
+      <div class="catch-txt" id="catchTxt">CAPTURING...</div>
+    </div>
+  </div>
+  <div class="xp-row">
+    <div class="xp-lbl">XP</div>
+    <div class="xp-bg"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
+    <div class="xp-lbl" id="xpVal">0</div>
+  </div>
+  <div class="btl-bot">
+    <div class="dlg" id="dlgBox">
+      <div class="dlg-qn" id="dlgQn"></div>
+      <div class="dlg-txt" id="dlgTxt">A wild topic appeared!</div>
+    </div>
+    <div class="opts" id="optsGrid"></div>
+    <div class="btl-skip-row" id="skipRow">
+      <button class="skip-btn" id="skipBtn">⏩ SKIP (optional topic)</button>
+    </div>
+  </div>
+</div>
+
+<!-- DEX -->
+<div id="dexScreen" class="screen">
+  <div class="topbar">
+    <button class="tb-btn" id="btnDexBack">◄ BACK</button>
+    <div class="topbar-title">📖 TOPIC DEX</div>
+    <div style="font-size:6px;color:var(--g4)" id="dexCount"></div>
+  </div>
+  <div class="scroll"><div class="dex-grid" id="dexGrid"></div></div>
+</div>
+
+<!-- RESULT -->
+<div id="resultScreen" class="screen">
+  <div class="res-ic" id="resIc">🎉</div>
+  <div class="res-ttl" id="resTtl">TOPIC CAUGHT!</div>
+  <div class="res-xp" id="resXp">+50 XP</div>
+  <div class="res-msg" id="resMsg"></div>
+  <button class="res-btn" id="btnResult">CONTINUE ►</button>
+</div>
+
+<!-- PROF OAK -->
+<div id="oakScreen" class="screen">
+  <div class="topbar">
+    <button class="tb-btn" id="btnOakBack">◄ BACK</button>
+    <div class="topbar-title">🎓 PROFESSOR OAK AI</div>
+  </div>
+  <div class="scroll">
+    <div class="oak-hero">
+      <span class="oak-ic">🎓</span>
+      <div class="oak-ttl">PROFESSOR OAK</div>
+      <div class="oak-sub">Your CMA Study AI</div>
+    </div>
+    <div class="oak-body">
+      <div class="oak-hdr">📸 UPLOAD A QUESTION</div>
+      <div class="oak-upload" id="oakUpload">
+        <div class="oak-upload-ic">📷</div>
+        <div class="oak-upload-txt">Take photo or choose image</div>
+        <div class="oak-upload-sub">Photo of textbook, scanner or handwritten question</div>
+      </div>
+      <img id="oakImg" alt="Question">
+      <button class="oak-ask-btn" id="oakAskBtn">🎓 ASK PROFESSOR OAK</button>
+      <div class="oak-loading" id="oakLoading">
+        <div class="oak-loading-txt">Prof. Oak is analysing...</div>
+        <div style="font-size:28px;margin-top:7px">🔍</div>
+      </div>
+      <div class="oak-ans" id="oakAns">
+        <div class="oak-ans-hdr">🎓 Prof. Oak says:</div>
+        <div class="oak-ans-txt" id="oakAnsTxt"></div>
+      </div>
+      <div style="height:10px"></div>
+      <div class="oak-hdr">⚡ QUICK ASK</div>
+      <div class="qa-grid">
+        <button class="qa-btn" id="qa0"><div class="qa-ic">📊</div><div class="qa-lbl">BEP Analysis</div></button>
+        <button class="qa-btn" id="qa1"><div class="qa-ic">⚡</div><div class="qa-lbl">GST ITC Rules</div></button>
+        <button class="qa-btn" id="qa2"><div class="qa-ic">📐</div><div class="qa-lbl">Variance Analysis</div></button>
+        <button class="qa-btn" id="qa3"><div class="qa-ic">🏠</div><div class="qa-lbl">Capital Gains Sec 54</div></button>
+        <button class="qa-btn" id="qa4"><div class="qa-ic">🏛</div><div class="qa-lbl">Companies Act Tips</div></button>
+        <button class="qa-btn" id="qa5"><div class="qa-ic">🔀</div><div class="qa-lbl">Amalgamation AS14</div></button>
+      </div>
+      <div style="height:12px"></div>
+      <div class="oak-hdr">💡 TIPS</div>
+      <div class="oak-tip"><div class="oak-tip-ttl">HOW TO USE</div><div class="oak-tip-body">Take a clear photo of your question. Oak reads it and gives step-by-step solution + concept.</div></div>
+      <div class="oak-tip"><div class="oak-tip-ttl">FOR TAX QUESTIONS</div><div class="oak-tip-body">Oak knows Finance Act 2025. Always get section numbers cited in every answer.</div></div>
+      <div class="oak-tip"><div class="oak-tip-ttl">PRACTICE MORE</div><div class="oak-tip-body">After any answer type "Give me 2 similar questions" for unlimited practice.</div></div>
+      <div style="height:20px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- FLEE BOX -->
+<div id="fleeBox">
+  <div class="flee-inner">
+    <div class="flee-ttl">⚠ FLEE BATTLE?</div>
+    <div class="flee-sub">Progress on this question will be lost. Topic will still be available.</div>
+    <div class="flee-btns">
+      <button class="flee-yes" id="btnFleeYes">✕ YES FLEE</button>
+      <button class="flee-no" id="btnFleeNo">◄ KEEP FIGHTING</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+'use strict';
+// ═══════════════════════════════════════
+// SOUND ENGINE — Web Audio API, no files
+// ═══════════════════════════════════════
+let AC=null,muted=false;
+function getAC(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}return AC;}
+function toggleMute(){muted=!muted;document.getElementById('muteBtn').textContent=muted?'🔇':'🔊';}
+function tone(freq,type,dur,vol,delay){
+  const c=getAC();if(!c||muted)return;
+  delay=delay||0;
+  try{const o=c.createOscillator(),g=c.createGain();
+    o.connect(g);g.connect(c.destination);
+    o.type=type;o.frequency.value=freq;
+    g.gain.setValueAtTime(vol,c.currentTime+delay);
+    g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+delay+dur);
+    o.start(c.currentTime+delay);o.stop(c.currentTime+delay+dur+.05);}
+  catch(e){}
+}
+const SND={
+  menu:function(){tone(440,'square',.08,.1);tone(550,'square',.08,.1,.07);},
+  back:function(){tone(330,'square',.08,.08);tone(262,'square',.08,.08,.07);},
+  correct:function(){[523,659,784,1047].forEach(function(f,i){tone(f,'square',.12,.12,i*.08);});},
+  wrong:function(){tone(200,'sawtooth',.15,.15);tone(150,'sawtooth',.2,.1,.12);},
+  catch:function(){[392,494,587,740,880].forEach(function(f,i){tone(f,'square',.1,.1,i*.07);});},
+  boss:function(){[110,147,165,196,220].forEach(function(f,i){tone(f,'sawtooth',.2,.15,i*.1);});},
+  levelup:function(){[262,330,392,523,659,784].forEach(function(f,i){tone(f,'square',.1,.12,i*.06);});},
+  badge:function(){[523,659,784,880,1047,1319].forEach(function(f,i){tone(f,'square',.15,.12,i*.07);});},
+  flee:function(){tone(400,'sawtooth',.1,.1);tone(300,'sawtooth',.1,.1,.09);tone(200,'sawtooth',.15,.1,.18);},
+  walk:function(){tone(200,'square',.04,.05);},
+  oak:function(){tone(660,'square',.1,.1);tone(880,'square',.1,.1,.09);tone(1047,'square',.14,.1,.18);},
+  battle:function(){[220,277,330].forEach(function(f,i){tone(f,'sawtooth',.2,.1,i*.06);});},
+};
+function snd(name){if(SND[name])SND[name]();}
+
+// ═══════════════════════════════════════
+// STORAGE (localStorage + memory fallback)
+// ═══════════════════════════════════════
+var _mem={};
+function LS(k){try{var v=localStorage.getItem(k);return v!==null?JSON.parse(v):(_mem[k]||null);}catch(e){return _mem[k]||null;}}
+function SS(k,v){_mem[k]=v;try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+
+// ═══════════════════════════════════════
+// GAME STATE
+// ═══════════════════════════════════════
+var G=LS('cmaq_v5')||{caught:{},skipped:{},done:{},xp:0,streak:0,lastTick:null,startDate:'2026-03-20'};
+function save(){SS('cmaq_v5',G);}
+function dayNum(){var t=new Date();t.setHours(0,0,0,0);var s=new Date(G.startDate);s.setHours(0,0,0,0);return Math.max(1,Math.floor((t-s)/86400000)+1);}
+function daysLeft(){var e=new Date('2026-06-11');e.setHours(0,0,0,0);var t=new Date();t.setHours(0,0,0,0);return Math.max(0,Math.ceil((e-t)/86400000));}
+
+// ═══════════════════════════════════════
+// GAME DATA
+// ═══════════════════════════════════════
+var ZONES=[
+ {id:'cost',name:'COST CAVE',color:'#1a3a1a',border:'#5DCAA5',mapX:1,mapY:1,mapW:4,mapH:4,badge:'⛏',badgeName:'Cave Badge',
+  topics:[
+   {id:'mat',name:'Material Costing',icon:'📦',day:1,opt:false,qs:[
+    {q:'[June 2023] COGS at most recent cost during inflation — which method?',o:['FIFO','LIFO','Weighted Avg','Simple Avg'],a:1},
+    {q:'[Dec 2022] EOQ = √(2AO/C). "C" is:',o:['Carrying cost p.u. p.a.','Cost per order','Material cost','Consumption'],a:0},
+    {q:'[June 2022] ABC analysis classifies items by:',o:['Quantity','Value of consumption','Weight','Frequency'],a:1},
+   ]},
+   {id:'lab',name:'Labour Costing',icon:'👷',day:3,opt:false,qs:[
+    {q:'[June 2023] Urgent customer overtime charged to:',o:['Overhead','That specific job','All jobs','P&L'],a:1},
+    {q:'[Dec 2022] Labour turnover (Separation) = (Separations/?)×100',o:['Avg workers','Opening workers','Closing workers','New recruits'],a:0},
+    {q:'[June 2022] Halsey premium = ?',o:['50% time saved × std rate','Full time saved × rate','25% × rate','Saved × actual rate'],a:0},
+   ]},
+   {id:'oh',name:'Overhead Costing',icon:'🏭',day:5,opt:false,qs:[
+    {q:'[June 2023] Absorbed > Incurred overhead means:',o:['Under-absorption','Over-absorption','Nil difference','Abnormal loss'],a:1},
+    {q:'[Dec 2022] Machine Hour Rate best for:',o:['Labour intensive','Machine intensive','Mixed dept','Service dept'],a:1},
+    {q:'[June 2022] Factory rent is:',o:['Direct cost','Variable overhead','Fixed overhead','Semi-variable'],a:2},
+   ]},
+   {id:'mc',name:'Marginal Costing',icon:'📊',day:7,opt:false,qs:[
+    {q:'[June 2023] SP=₹100,VC=₹60,FC=₹80K. BEP units?',o:['1,000','2,000','3,000','4,000'],a:1},
+    {q:'[Dec 2022] P/V ratio 40%, FC=₹2L. BEP sales?',o:['₹5L','₹4L','₹3L','₹8L'],a:0},
+    {q:'[June 2022] MOS=₹3L, P/V=30%. Profit?',o:['₹90K','₹1L','₹1.2L','₹70K'],a:0},
+   ]},
+   {id:'sc',name:'Standard Costing',icon:'📐',day:10,opt:false,qs:[
+    {q:'[June 2023] Material Price Variance uses actual quantity — True?',o:['True','False — uses std qty','True for labour only','False always'],a:0},
+    {q:'[Dec 2022] SH=500,AH=550,SR=₹10. Labour Efficiency Variance?',o:['₹500 Adverse','₹500 Favourable','₹550 Adverse','₹550 Fav'],a:0},
+    {q:'[June 2022] Volume variance arises in:',o:['Marginal costing','Absorption costing','Both','Neither'],a:1},
+   ]},
+   {id:'bc',name:'Budgetary Control',icon:'🎯',day:13,opt:false,qs:[
+    {q:'[June 2023] Budget in physical units called:',o:['Cash budget','Flexible budget','Functional budget','Rolling budget'],a:2},
+    {q:'[Dec 2022] Base for all other budgets:',o:['Cash budget','Production budget','Master budget','Sales budget'],a:3},
+    {q:'[June 2022] ZBB overcomes weakness of:',o:['Flexible budgeting','Incremental budgeting','Rolling budgets','Fixed budgets'],a:1},
+   ]},
+   {id:'proc',name:'Process Costing',icon:'🔄',day:15,opt:false,qs:[
+    {q:'[June 2023] Equivalent units account for:',o:['Scrap units','WIP units','Normal losses','Abnormal gains'],a:1},
+    {q:'[Dec 2022] Abnormal gain valued at:',o:['Scrap value','Normal cost per unit','Market price','Nil'],a:1},
+    {q:'[June 2022] By-products have:',o:['No value','Minor value','Significant value same process','Separate process value'],a:2},
+   ]},
+   {id:'job',name:'Job Costing',icon:'🔧',day:17,opt:false,qs:[
+    {q:'[June 2023] Job costing best for:',o:['Cement plant','Oil refinery','Ship building','Sugar factory'],a:2},
+    {q:'[Dec 2022] Job cost sheet does NOT include:',o:['Direct material','Direct labour','Machine hours','Selling price'],a:3},
+    {q:'[June 2022] Batch costing is variant of:',o:['Process costing','Job costing','Contract costing','Operating costing'],a:1},
+   ]},
+   {id:'con',name:'Contract Costing',icon:'🏗',day:19,opt:true,skipPair:'job',qs:[
+    {q:'[June 2023] Certified ₹8L, cost certified ₹6L. Notional profit?',o:['₹1.5L','₹2L','₹1L','₹2.5L'],a:1},
+    {q:'[Dec 2022] Retention money typically:',o:['5%','10%','15%','20%'],a:1},
+    {q:'[June 2022] 60% complete, notional profit ₹3L. Transfer to P&L?',o:['₹2.4L','₹1.8L','₹1.2L','₹2L'],a:1},
+   ]},
+  ],
+  boss:{id:'costboss',name:'COST MASTER',icon:'👑',qs:[
+   {q:'[June 2023 Paper] FC=₹1.2L, VC ratio=60%. BEP sales?',o:['₹2L','₹3L','₹4L','₹1.5L'],a:1},
+   {q:'[Dec 2022 Paper] Std mat 10kg@₹5. Actual 12kg@₹4.5. Material Cost Variance?',o:['₹4 Adverse','₹4 Favourable','₹6 Adverse','₹3 Adverse'],a:0},
+   {q:'[June 2022 Paper] FO Actual=₹95K Budget=₹1L Absorbed=₹1.05L. Volume Variance?',o:['₹5K Fav','₹5K Adv','₹10K Fav','₹10K Adv'],a:0},
+   {q:'[Dec 2021 Paper] P/V ratio 25%, MOS=₹4L. Profit?',o:['₹75K','₹1L','₹1.5L','₹2L'],a:1},
+   {q:'[June 2021 Paper] Absorption profit > Marginal when:',o:['Prod < Sales','Prod > Sales','Prod = Sales','FC=0'],a:1},
+  ]}
+ },
+ {id:'fa',name:'ACCOUNT RUINS',color:'#1a2040',border:'#85B7EB',mapX:6,mapY:1,mapW:4,mapH:4,badge:'📚',badgeName:'Ruin Badge',
+  topics:[
+   {id:'as1',name:'AS 1,2,9,10',icon:'📋',day:1,opt:false,qs:[
+    {q:'[June 2023] AS 2 inventories valued at:',o:['Cost only','NRV only','Lower of cost or NRV','Market price'],a:2},
+    {q:'[Dec 2022] AS 9 revenue recognised when:',o:['Order placed','Goods dispatched','Significant risks transferred','Payment received'],a:2},
+    {q:'[June 2022] AS 10 capitalise subsequent expenditure if:',o:['Routine repair','Increases future benefits','Below threshold','Board approved'],a:1},
+   ]},
+   {id:'as2',name:'AS 15,22,26',icon:'📑',day:4,opt:false,qs:[
+    {q:'[June 2023] Deferred tax liability when:',o:['Accounting < taxable','Accounting > taxable','Tax paid > expense','Both equal'],a:1},
+    {q:'[Dec 2022] AS 15 defined benefit obligation:',o:['PF contribution','Gratuity','Leave encashment','All three'],a:3},
+    {q:'[June 2022] AS 26 goodwill must be:',o:['Written off immediately','Amortised over useful life','Tested for impairment','Retained forever'],a:1},
+   ]},
+   {id:'cfa',name:'Company Accounts',icon:'🏢',day:6,opt:false,qs:[
+    {q:'[June 2023] NOT current liability under Schedule III:',o:['Trade payables','Short-term borrowings','Long-term provisions','Short-term provisions'],a:2},
+    {q:'[Dec 2022] Share premium credited to:',o:['Share capital','Securities premium reserve','General reserve','Capital reserve'],a:1},
+    {q:'[June 2022] Preference shares redeemed from:',o:['Capital reserve only','Profits or fresh issue','Any reserve','Retained earnings'],a:1},
+   ]},
+   {id:'cfs',name:'Cash Flow AS 3',icon:'💰',day:9,opt:false,qs:[
+    {q:'[June 2023] Added back to net profit (indirect):',o:['Increase in debtors','Depreciation','Gain on asset sale','Decrease in creditors'],a:1},
+    {q:'[Dec 2022] Equity share proceeds in:',o:['Operating','Investing','Financing','Either A or C'],a:2},
+    {q:'[June 2022] Interest received (non-financial co.) classified as:',o:['Operating only','Investing only','Financing only','Either operating or investing'],a:3},
+   ]},
+   {id:'part',name:'Partnership',icon:'🤝',day:11,opt:false,qs:[
+    {q:'[June 2023] New partner goodwill credited to:',o:["New partner capital","Old partners capital old ratio","Goodwill account","General reserve"],a:1},
+    {q:'[Dec 2022] Gaining ratio applies on:',o:['Admission','Retirement','Dissolution','Profit ratio change'],a:1},
+    {q:'[June 2022] Partner loan on dissolution repaid:',o:['First','After outside liabilities before capital','After capital','Last'],a:1},
+   ]},
+   {id:'amal',name:'Amalgamation AS14',icon:'🔀',day:13,opt:false,qs:[
+    {q:'[June 2023] Pooling of interests assets recorded at:',o:['Fair value','Transferor book value','Revalued amount','Average'],a:1},
+    {q:'[Dec 2022] Capital reserve in amalgamation when:',o:['PC > net assets','Net assets > PC','Goodwill arises','Revaluation surplus'],a:1},
+    {q:'[June 2022] Which method recognises goodwill?',o:['Pooling of interests','Purchase method','Both','Neither'],a:1},
+   ]},
+   {id:'cons',name:'Consignment',icon:'📦',day:15,opt:false,qs:[
+    {q:'[June 2023] Loading in consignment stock =',o:['Invoice minus Cost','Cost only','SP minus Invoice','MV minus Cost'],a:0},
+    {q:'[Dec 2022] Del credere commission covers:',o:['Theft','Bad debts','Exchange loss','Storage damage'],a:1},
+    {q:'[June 2022] Unsold consignment valued at:',o:['Cost only','Invoice price','Cost + proportionate expenses','Selling price'],a:2},
+   ]},
+   {id:'brnch',name:'Branch Accounts',icon:'🏬',day:17,opt:false,qs:[
+    {q:'[June 2023] Debtors system used for:',o:['Large branches','Small branches incomplete records','Foreign branches','Dependent branches'],a:1},
+    {q:'[Dec 2022] Loading in branch stock account:',o:['Debited on goods sent','Credited on closing','Both','Neither'],a:2},
+    {q:'[June 2022] Branch sells above invoice — excess:',o:['Branch profit','Surplus branch adjustment ac','HO profit','Ignored'],a:1},
+   ]},
+   {id:'ins',name:'Insurance Claims',icon:'🛡',day:18,opt:true,skipPair:'brnch',qs:[
+    {q:'[June 2023] Average clause applies when:',o:['Claim > actual loss','Policy < stock value on fire date','Total loss','Insured is NRI'],a:1},
+    {q:'[Dec 2022] Gross profit rate in loss of profit policy:',o:['Current year','Previous year','Standard rate','3-year average'],a:1},
+    {q:'[June 2022] Standing charges means:',o:['Variable costs','Fixed expenses continuing during stoppage','All overheads','Direct costs'],a:1},
+   ]},
+  ],
+  boss:{id:'faboss',name:'ACCOUNTS TITAN',icon:'💎',qs:[
+   {q:'[June 2023 Paper] AS 2 excludes from inventory cost:',o:['Import duties','Post-production storage','Conversion costs','Purchase price'],a:1},
+   {q:'[Dec 2022 Paper] NP=₹5L Dep=₹80K Debtors+₹30K Creditors-₹20K. Cash from ops?',o:['₹5.3L','₹5.5L','₹4.5L','₹5.7L'],a:0},
+   {q:'[June 2022 Paper] X,Y,Z 3:2:1. Z retires. New X:Y=5:3. Gaining ratio?',o:['5:3','2:1','1:1','3:2'],a:2},
+   {q:'[Dec 2021 Paper] PC=₹12L Net assets=₹10L. Amalgamation treatment?',o:['Capital reserve ₹2L','Goodwill ₹2L','General reserve','Revenue reserve'],a:1},
+   {q:'[June 2021 Paper] DTA recognised when:',o:['Always','Future taxable profits virtually certain','Board approves','Auditor certifies'],a:1},
+  ]}
+ },
+ {id:'law',name:'LAW LABYRINTH',color:'#2a1a00',border:'#EF9F27',mapX:1,mapY:6,mapW:4,mapH:4,badge:'⚖',badgeName:'Law Badge',
+  topics:[
+   {id:'co1',name:'Companies Act Formation',icon:'🏛',day:26,opt:false,qs:[
+    {q:'[June 2023] Min persons for public company:',o:['2','5','7','10'],a:2},
+    {q:'[Dec 2022] Company incorporated from date of:',o:['MOA filing','Certificate of Incorporation','First board meeting','Stamp duty'],a:1},
+    {q:'[June 2022] Object clause is part of:',o:['AOA','MOA','Prospectus','Annual Report'],a:1},
+   ]},
+   {id:'co2',name:'Companies Act Mgmt',icon:'👔',day:28,opt:false,qs:[
+    {q:'[June 2023] Max gap between board meetings:',o:['60 days','90 days','120 days','180 days'],a:2},
+    {q:'[Dec 2022] Statutory audit report addressed to:',o:['Board','Central Govt','Members of company','ROC'],a:2},
+    {q:'[June 2022] Section 135 deals with:',o:['Director disqualification','CSR','Audit committee','Related party'],a:1},
+   ]},
+   {id:'ica',name:'Contract Act',icon:'📜',day:30,opt:false,qs:[
+    {q:'[June 2023] Contract under coercion is:',o:['Void','Voidable at aggrieved option','Valid','Illegal'],a:1},
+    {q:'[Dec 2022] Offer lapses if not accepted within:',o:['7 days','Reasonable time','30 days','6 months'],a:1},
+    {q:'[June 2022] Purpose of damages for breach:',o:['Punish defaulter','Put injured party as if contract performed','Compensate both','Cover future losses'],a:1},
+   ]},
+   {id:'nia',name:'NI Act',icon:'💳',day:32,opt:false,qs:[
+    {q:'[June 2023] Cheque drawn on:',o:['Any person','Specified banker','Any banker','Government'],a:1},
+    {q:'[Dec 2022] Holder in due course immune from:',o:['Higher consideration','Certain defences','Court protection','Always a bank'],a:1},
+    {q:'[June 2022] Dishonour by non-payment requires:',o:['Notice of protest','Notice of dishonour','Notice of default','None'],a:1},
+   ]},
+   {id:'eth',name:'Business Ethics',icon:'💡',day:34,opt:false,qs:[
+    {q:'[June 2023] CMA professional ethics governed by:',o:['SEBI','ICMAI Code of Ethics','Companies Act','RBI'],a:1},
+    {q:'[Dec 2022] NOT characteristic of ethical decision:',o:['Transparency','Fairness','Profit at any cost','Accountability'],a:2},
+    {q:'[June 2022] Whistle-blowing means:',o:['Reporting misconduct to authorities','Celebrating','Warning competitors','None'],a:0},
+   ]},
+   {id:'cpa',name:'Consumer Protection',icon:'🛒',day:36,opt:false,qs:[
+    {q:'[June 2023] State Commission hears claims:',o:['Up to ₹1 crore','₹1-10 crore','Above ₹10 crore','No limit'],a:1},
+    {q:'[Dec 2022] NOT unfair trade practice:',o:['False representation','Deceptive packaging','Honest advertising','Misleading comparison'],a:2},
+    {q:'[June 2022] Product liability under CPA covers:',o:['Manufacturer only','Seller only','Service provider only','All three'],a:3},
+   ]},
+   {id:'soga',name:'Sale of Goods Act',icon:'🛍',day:36,opt:true,skipPair:'ica',qs:[
+    {q:'[June 2023] Nemo dat quod non habet means:',o:['Buyer beware','No one gives better title than they have','Seller must disclose','Risk follows ownership'],a:1},
+    {q:'[Dec 2022] Implied condition sale by description — goods must:',o:['Correspond to description','Merchantable quality','Both A and B','Neither'],a:2},
+    {q:'[June 2022] Risk passes with property unless:',o:['Parties agree otherwise','In transit','Buyer paid','Delivery pending'],a:0},
+   ]},
+  ],
+  boss:{id:'lawboss',name:'LEGAL DRAGON',icon:'⚖',qs:[
+   {q:'[June 2023 Paper] Sec 149(1) listed company independent directors:',o:['1/4 of total','1/3 of total','1/2 of total','All directors'],a:1},
+   {q:'[Dec 2022 Paper] Minor agreement is:',o:['Void ab initio','Voidable at minor option','Valid after majority','Ratifiable on majority'],a:0},
+   {q:'[June 2022 Paper] Noting and protesting applies to:',o:['Cheques only','Bills of exchange and promissory notes','All NI','Demand drafts'],a:1},
+   {q:'[Dec 2021 Paper] CSR applies when net profit at least:',o:['₹1 crore','₹5 crore','₹10 crore','₹50 crore'],a:1},
+   {q:'[June 2021 Paper] Gap between two AGMs not to exceed:',o:['6 months','12 months','15 months','18 months'],a:2},
+  ]}
+ },
+ {id:'dt',name:'TAX DUNGEON',color:'#200a00',border:'#F0997B',mapX:6,mapY:6,mapW:4,mapH:4,badge:'🧾',badgeName:'Tax Badge',
+  topics:[
+   {id:'res',name:'Residential Status',icon:'🏠',day:30,opt:false,qs:[
+    {q:'[June 2023] Resident if stay at least ___ days in PY:',o:['60','90','182','120'],a:2},
+    {q:'[Dec 2022] NOR if NRI for at least:',o:['5 of 10 years','7 of 10 years','All 10 years','2 of 5 years'],a:1},
+    {q:'[June 2022] Income outside India to ROR:',o:['Exempt','Taxable','Only if remitted','Concessional rate'],a:1},
+   ]},
+   {id:'sal',name:'Income from Salary',icon:'💼',day:31,opt:false,qs:[
+    {q:'[June 2023] Standard deduction AY 2024-25:',o:['₹40K','₹50K','₹75K','₹1L'],a:1},
+    {q:'[Dec 2022] Government employee gratuity:',o:['Fully taxable','Fully exempt','Partly exempt ₹20L','Above ₹10L taxable'],a:1},
+    {q:'[June 2022] NOT one of three HRA conditions:',o:['Actual HRA','50% basic metro','Rent minus 10% basic','100% rent paid'],a:3},
+   ]},
+   {id:'hp',name:'House Property',icon:'🏡',day:34,opt:false,qs:[
+    {q:'[June 2023] SOP annual value:',o:['Market rent','Municipal value','Nil','Fair rent'],a:2},
+    {q:'[Dec 2022] 30% standard deduction on:',o:['Net annual value','Gross annual value','Municipal taxes','Expected rent'],a:0},
+    {q:'[June 2022] Max interest deduction SOP housing loan:',o:['₹1L','₹1.5L','₹2L','₹3L'],a:2},
+   ]},
+   {id:'cg',name:'Capital Gains',icon:'📈',day:36,opt:false,qs:[
+    {q:'[June 2023] Listed equity held more than 12 months is:',o:['Short-term','Long-term','Exempt','Speculative'],a:1},
+    {q:'[Dec 2022] LTCG listed equity above ₹1L tax rate:',o:['10% no indexation','20% with indexation','15%','Exempt'],a:0},
+    {q:'[June 2022] Section 54 exemption for:',o:['Any asset','Residential property','Agricultural land','Gold'],a:1},
+   ]},
+   {id:'ded',name:'Chapter VI-A',icon:'💸',day:38,opt:false,qs:[
+    {q:'[June 2023] Max 80C+80CCC+80CCD(1) combined:',o:['₹1L','₹1.5L','₹2L','₹2.5L'],a:1},
+    {q:'[Dec 2022] 80D senior citizen self:',o:['₹25K','₹50K','₹75K','₹1L'],a:1},
+    {q:'[June 2022] PM NRELF 80G deduction:',o:['50%','100% no limit','100% with limit','75%'],a:1},
+   ]},
+   {id:'tds',name:'TDS Provisions',icon:'🏦',day:40,opt:false,qs:[
+    {q:'[June 2023] TDS on salary under Section:',o:['194','192','194A','194C'],a:1},
+    {q:'[Dec 2022] 194A bank interest threshold:',o:['₹5K','₹10K','₹40K','₹50K'],a:2},
+    {q:'[June 2022] Form 16 issued by:',o:['Employee to employer','Employer to employee','Bank to depositor','Deductor to payee'],a:1},
+   ]},
+   {id:'pgbp',name:'PGBP Basics',icon:'💹',day:43,opt:true,skipPair:'cg',qs:[
+    {q:'[June 2023] IT depreciation on:',o:['Cost of asset','Opening WDV of block','Closing WDV','Average WDV'],a:1},
+    {q:'[Dec 2022] Sec 40A(3) cash payment disallowed above:',o:['₹10K','₹20K','₹35K transporters','A or C per case'],a:3},
+    {q:'[June 2022] Depreciation NOT allowed on:',o:['Plant','Land','Furniture','Computers'],a:1},
+   ]},
+  ],
+  boss:{id:'dtboss',name:'TAX DEMON',icon:'🧾',qs:[
+   {q:'[June 2023 Paper] Salary ₹6L HRA ₹1L Rent ₹1.2L Mumbai. HRA exempt?',o:['₹1L','₹90K','₹60K','₹72K'],a:1},
+   {q:'[Dec 2022 Paper] Indexed cost ₹8L sale ₹15L. LTCG tax at 20%?',o:['₹1L','₹1.4L','₹3L','₹1.2L'],a:1},
+   {q:'[June 2022 Paper] Gross rent ₹3L municipal tax ₹20K. NAV?',o:['₹3L','₹2.8L','₹2.1L','₹2.52L'],a:1},
+   {q:'[Dec 2021 Paper] 80C=₹1.2L 80D=₹25K Gross income=₹6.5L. Taxable?',o:['₹5.05L','₹5.3L','₹5L','₹4.8L'],a:0},
+   {q:'[June 2021 Paper] Private employee gratuity max exempt:',o:['₹10L','₹20L','₹25L','No limit'],a:1},
+  ]}
+ },
+ {id:'idt',name:'GST FORTRESS',color:'#0a0a25',border:'#AFA9EC',mapX:11,mapY:3,mapW:4,mapH:4,badge:'⚡',badgeName:'GST Badge',
+  topics:[
+   {id:'sup',name:'GST Supply',icon:'🔗',day:41,opt:false,qs:[
+    {q:'[June 2023] Supply under GST defined in Section:',o:['5','7','9','12'],a:1},
+    {q:'[Dec 2022] Import of services for business — taxable?',o:['No — import','Yes even no consideration','Yes for consideration only','No — personal'],a:2},
+    {q:'[June 2022] Schedule II covers:',o:['Exempt supplies','Activities treated as supply','Composition scheme','GST rates'],a:1},
+   ]},
+   {id:'tos',name:'Time of Supply',icon:'⏰',day:43,opt:false,qs:[
+    {q:'[June 2023] NOT an option for time of supply of goods:',o:['Invoice date','Removal date','Payment date','Delivery to buyer date'],a:3},
+    {q:'[Dec 2022] TOS services forward charge — earliest of:',o:['Invoice or payment date','Invoice only','Payment only','Contract date'],a:0},
+    {q:'[June 2022] Reverse charge shifts liability to:',o:['Supplier','Recipient','Government','Both'],a:1},
+   ]},
+   {id:'pos',name:'Place of Supply',icon:'📍',day:44,opt:false,qs:[
+    {q:'[June 2023] POS for imported goods:',o:['Importer location','Customs station','Place of delivery','Origin country'],a:1},
+    {q:'[Dec 2022] Immovable property services POS:',o:['Supplier location','Property location','Recipient location','Contract place'],a:1},
+    {q:'[June 2022] IGST levied on:',o:['Intra-state supply','Inter-state supply','Both','Imports only'],a:1},
+   ]},
+   {id:'val',name:'GST Valuation',icon:'💰',day:46,opt:false,qs:[
+    {q:'[June 2023] Transaction value under Section 15:',o:['MRP','Price paid or payable plus adjustments','Cost of production','Standard value'],a:1},
+    {q:'[Dec 2022] Post-supply discounts deductible only if:',o:['Given in invoice','Agreement before supply plus ITC reversed','Year end','Recipient approves'],a:1},
+    {q:'[June 2022] Related party valued under:',o:['Invoice value always','Valuation Rules 28-33','Cost plus 10%','Market value'],a:1},
+   ]},
+   {id:'itc',name:'Input Tax Credit',icon:'🔄',day:47,opt:false,qs:[
+    {q:'[June 2023] ITC on food and beverages is:',o:['Fully eligible','Restaurants only','Blocked Sec 17(5)','With conditions'],a:2},
+    {q:'[Dec 2022] GSTR-2B is:',o:['Return filed by taxpayer','Auto-drafted ITC statement from suppliers','Summary return','Annual return'],a:1},
+    {q:'[June 2022] ITC time limit — earlier of September return due date OR:',o:['December same year','Annual return filing date','March next FY','2 years from invoice'],a:1},
+   ]},
+   {id:'reg',name:'GST Registration',icon:'📝',day:49,opt:false,qs:[
+    {q:'[June 2023] Registration threshold goods normal state:',o:['₹10L','₹20L','₹40L','₹1 crore'],a:2},
+    {q:'[Dec 2022] TDS deductor must register even if:',o:['Below threshold','Turnover zero','GST exempt','Home business'],a:1},
+    {q:'[June 2022] Registration application within ___ days:',o:['7','15','30','60'],a:2},
+   ]},
+   {id:'cus',name:'Customs Duty',icon:'🚢',day:52,opt:false,qs:[
+    {q:'[June 2023] BCD levied under:',o:['Section 3','Section 12 Customs Act 1962','IGST Act','Finance Act'],a:1},
+    {q:'[Dec 2022] CIF means:',o:['Cost only','Cost plus Insurance plus Freight','Cost plus duty','Cost with tax'],a:1},
+    {q:'[June 2022] Anti-dumping duty protects:',o:['Indian exporters','Domestic industry from cheap imports','Govt revenue','Foreign investors'],a:1},
+   ]},
+   {id:'app',name:'GST Appeals',icon:'⚖',day:52,opt:true,skipPair:'reg',qs:[
+    {q:'[June 2023] First appellate authority GST:',o:['GSTAT','High Court','Commissioner Appeals','Advance Ruling'],a:2},
+    {q:'[Dec 2022] Pre-deposit for GST appeal:',o:['5%','10%','20%','25%'],a:1},
+    {q:'[June 2022] Advance ruling binding on:',o:['All taxpayers in state','Applicant and concerned officer only','All officers','High Court'],a:1},
+   ]},
+  ],
+  boss:{id:'idtboss',name:'GST OVERLORD',icon:'⚡',qs:[
+   {q:'[June 2023 Paper] Composite supply — principal 18%, Mixed highest 28%. Which applies?',o:['18% both','18% composite 28% mixed','28% both','Blended rate both'],a:1},
+   {q:'[Dec 2022 Paper] ITC ₹50K claimed. Goods returned. ITC reversal?',o:['Not required','Proportionate','Full ₹50K reversed','Only if credit note'],a:2},
+   {q:'[June 2022 Paper] IGST imports ITC available to:',o:['No one','Importer for CGST or SGST or IGST','Exporter only','Government'],a:1},
+   {q:'[Dec 2021 Paper] OIDAR services unregistered person India POS?',o:['Supplier location','Recipient location','Delhi','Deemed India'],a:1},
+   {q:'[June 2021 Paper] Export of goods under GST is:',o:['Exempt supply','Zero-rated supply','Nil-rated supply','Non-taxable supply'],a:1},
+  ]}
+ },
+];
+
+var DAILY_MS=[
+  {day:1, s:'cost',t:'Material costing — FIFO, LIFO, EOQ',m:'12-15 marks',hot:true},
+  {day:3, s:'cost',t:'Labour costing — piece rate, idle time',m:'10-12 marks'},
+  {day:5, s:'cost',t:'Overhead costing — absorption rate',m:'10-12 marks'},
+  {day:7, s:'cost',t:'Marginal costing & BEP analysis',m:'15-18 marks',hot:true},
+  {day:10,s:'cost',t:'Standard costing & variance analysis',m:'15-18 marks',hot:true},
+  {day:13,s:'cost',t:'Budgetary control — flexible budget',m:'10-12 marks'},
+  {day:15,s:'cost',t:'Process costing — abnormal loss',m:'10-12 marks'},
+  {day:17,s:'cost',t:'Job costing',m:'5-8 marks'},
+  {day:19,s:'cost',t:'Contract costing (optional)',m:'3-5 marks',opt:true},
+  {day:20,s:'cost',t:'Solve Cost scanner — all chapters',m:'Revision',hot:true},
+  {day:1, s:'fa',t:'AS 1,2,9,10 — concepts & applications',m:'18-20 marks',hot:true},
+  {day:4, s:'fa',t:'AS 15,22,26',m:'Included above',hot:true},
+  {day:6, s:'fa',t:'Company final accounts Schedule III',m:'15-18 marks'},
+  {day:9, s:'fa',t:'Cash flow statement AS 3',m:'10-12 marks',hot:true},
+  {day:11,s:'fa',t:'Partnership — admission, retirement',m:'10-12 marks'},
+  {day:13,s:'fa',t:'Amalgamation AS 14',m:'8-10 marks'},
+  {day:15,s:'fa',t:'Consignment & joint venture',m:'5-8 marks'},
+  {day:17,s:'fa',t:'Branch accounts',m:'5-8 marks'},
+  {day:19,s:'fa',t:'Hire purchase or lease (pick one)',m:'5-8 marks',opt:true},
+  {day:22,s:'fa',t:'Solve FA scanner — all chapters',m:'Revision',hot:true},
+  {day:26,s:'law',t:'Companies Act — incorporation, MOA',m:'10-12 marks',hot:true},
+  {day:28,s:'law',t:'Companies Act — directors, meetings',m:'10-12 marks',hot:true},
+  {day:30,s:'law',t:'Indian Contract Act',m:'10-12 marks'},
+  {day:32,s:'law',t:'Negotiable Instruments Act',m:'8-10 marks'},
+  {day:34,s:'law',t:'Business Ethics — all sections',m:'10-15 marks',hot:true},
+  {day:36,s:'law',t:'Consumer Protection Act',m:'5-8 marks'},
+  {day:30,s:'dt',t:'Residential status & incidence',m:'5-8 marks'},
+  {day:31,s:'dt',t:'Income from salary — perquisites',m:'15-18 marks',hot:true},
+  {day:34,s:'dt',t:'House property — SOP and LOP',m:'10-12 marks',hot:true},
+  {day:36,s:'dt',t:'Capital Gains — STCG, LTCG, Sec 54',m:'10-12 marks',hot:true},
+  {day:38,s:'dt',t:'Chapter VI-A — 80C, 80D, 80G',m:'10-12 marks',hot:true},
+  {day:40,s:'dt',t:'TDS — Sec 192, 194A, 194C',m:'8-10 marks'},
+  {day:40,s:'idt',t:'GST Supply — Section 7, 8, 9',m:'12-15 marks',hot:true},
+  {day:43,s:'idt',t:'Time & place of supply',m:'16-20 marks',hot:true},
+  {day:47,s:'idt',t:'Input Tax Credit — eligibility, blocked',m:'12-15 marks',hot:true},
+  {day:49,s:'idt',t:'GST Registration provisions',m:'5-8 marks'},
+  {day:52,s:'idt',t:'Customs duty basics',m:'15-20 marks'},
+  {day:55,s:'idt',t:'Solve IDT scanner — GST chapters',m:'Revision',hot:true},
+  {day:51,s:'cost',t:'Mock Test 1 — Cost Accounting (3 hrs timed)',m:'Full paper',hot:true},
+  {day:55,s:'fa',t:'Mock Test 2 — Financial Accounting (3 hrs)',m:'Full paper',hot:true},
+  {day:58,s:'law',t:'Mock Test 3 — Laws & Ethics (3 hrs)',m:'Full paper',hot:true},
+  {day:60,s:'dt',t:'Mock Test 4 — Direct Taxation (3 hrs)',m:'Full paper',hot:true},
+  {day:62,s:'idt',t:'Mock Test 5 — Indirect Tax (3 hrs)',m:'Full paper',hot:true},
+  {day:71,s:'cost',t:'ICMAI past paper — Cost (last 3 June)',m:'Timed',hot:true},
+  {day:72,s:'fa',t:'ICMAI past paper — FA (last 3 June)',m:'Timed',hot:true},
+  {day:80,s:'cost',t:'EXAM DAY — arrive 30 min early!',m:'11 Jun 2026',hot:true},
+];
+
+// ═══════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════
+var ALL_TOPICS=[];
+ZONES.forEach(function(z){
+  z.topics.forEach(function(t){ALL_TOPICS.push(Object.assign({},t,{zoneId:z.id,zoneColor:z.color,zoneBorder:z.border}));});
+  ALL_TOPICS.push(Object.assign({},z.boss,{zoneId:z.id,zoneColor:z.color,zoneBorder:z.border,isBoss:true}));
+});
+function caughtN(){return ALL_TOPICS.filter(function(t){return G.caught[t.id]&&G.caught[t.id]!=='skip';}).length;}
+
+// ═══════════════════════════════════════
+// SPRITES
+// ═══════════════════════════════════════
+function mon(id,sz,caught){
+  sz=sz||80;caught=caught||false;
+  var PAL={cost:['#5DCAA5','#2a8a65','#0a3020'],fa:['#85B7EB','#3a6aaa','#0a2050'],law:['#EF9F27','#aa6a00','#3a2000'],dt:['#F0997B','#aa5a2a','#3a1000'],idt:['#AFA9EC','#6a60bb','#1a1a4a'],boss:['#FFD700','#aa8800','#3a2a00']};
+  var zone=id.indexOf('boss')>=0?'boss':['mat','lab','oh','mc','sc','bc','proc','job','con'].indexOf(id)>=0?'cost':['as1','as2','cfa','cfs','part','amal','cons','brnch','ins'].indexOf(id)>=0?'fa':['co1','co2','ica','nia','eth','cpa','soga'].indexOf(id)>=0?'law':['res','sal','hp','cg','ded','tds','pgbp'].indexOf(id)>=0?'dt':'idt';
+  var c=PAL[zone];
+  var sd=id.split('').reduce(function(a,b){return a+b.charCodeAt(0);},0);
+  var r=function(n){return((sd*(n+7)*13)%7)-3;};
+  var glow=caught?'filter:drop-shadow(0 0 8px '+c[0]+')':'';
+  if(id.indexOf('boss')>=0)return '<svg width="'+sz+'" height="'+sz+'" viewBox="0 0 64 64" style="'+glow+'"><polygon points="32,3 44,18 60,22 48,35 52,52 32,43 12,52 16,35 4,22 20,18" fill="'+c[0]+'" stroke="'+c[1]+'" stroke-width="2"/><circle cx="32" cy="29" r="13" fill="'+c[1]+'"/><circle cx="25" cy="25" r="4" fill="'+c[2]+'"/><circle cx="39" cy="25" r="4" fill="'+c[2]+'"/><circle cx="25" cy="25" r="2" fill="#fff"/><circle cx="39" cy="25" r="2" fill="#fff"/><path d="M23 35 Q32 42 41 35" stroke="#fff" stroke-width="2" fill="none"/><text x="32" y="59" text-anchor="middle" font-size="7" fill="'+c[0]+'" font-family="monospace">BOSS</text></svg>';
+  var by=18+r(1);
+  return '<svg width="'+sz+'" height="'+sz+'" viewBox="0 0 64 64" style="'+glow+'"><ellipse cx="32" cy="'+(by+19)+'" rx="'+(13+r(2))+'" ry="'+(9+r(3))+'" fill="'+c[0]+'" stroke="'+c[1]+'" stroke-width="1.5"/><circle cx="32" cy="'+by+'" r="'+(11+r(4))+'" fill="'+c[0]+'" stroke="'+c[1]+'" stroke-width="1.5"/><circle cx="'+(26+r(5))+'" cy="'+(by-2)+'" r="3" fill="'+c[2]+'"/><circle cx="'+(38+r(6))+'" cy="'+(by-2)+'" r="3" fill="'+c[2]+'"/><circle cx="'+(26+r(5))+'" cy="'+(by-2)+'" r="1.5" fill="#fff"/><circle cx="'+(38+r(6))+'" cy="'+(by-2)+'" r="1.5" fill="#fff"/><path d="M'+(27+r(7))+' '+(by+5)+' Q32 '+(by+9)+' '+(37+r(8))+' '+(by+5)+'" stroke="'+c[2]+'" stroke-width="1.5" fill="none"/>'+(caught?'<text x="32" y="60" text-anchor="middle" font-size="8" fill="'+c[0]+'" font-family="monospace">&#x2713;</text>':'')+'</svg>';
+}
+function playerSvg(){return '<svg width="60" height="60" viewBox="0 0 64 64"><circle cx="32" cy="16" r="10" fill="#f5c5a0" stroke="#333" stroke-width="1.5"/><rect x="22" y="26" width="20" height="16" rx="3" fill="#2244aa" stroke="#333" stroke-width="1.5"/><rect x="14" y="27" width="9" height="13" rx="3" fill="#2244aa" stroke="#333" stroke-width="1"/><rect x="41" y="27" width="9" height="13" rx="3" fill="#2244aa" stroke="#333" stroke-width="1"/><rect x="24" y="42" width="7" height="11" rx="3" fill="#1a1a33" stroke="#333" stroke-width="1"/><rect x="33" y="42" width="7" height="11" rx="3" fill="#1a1a33" stroke="#333" stroke-width="1"/><circle cx="27" cy="14" r="2" fill="#333"/><circle cx="37" cy="14" r="2" fill="#333"/><path d="M27 20 Q32 23 37 20" stroke="#333" stroke-width="1.5" fill="none"/></svg>';}
+
+// ═══════════════════════════════════════
+// SCREEN MANAGEMENT
+// ═══════════════════════════════════════
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('on');});
+  var el=document.getElementById(id+'Screen');
+  if(!el){console.warn('No screen:',id);return;}
+  el.classList.add('on');
+  if(id==='home'){renderHome();}
+  if(id==='ow'){resizeMap();startMapLoop();}
+  if(id==='dex'){renderDex();}
+  if(id==='oak'){resetOak();}
+  if(id==='battle'){}
+  if(id==='result'){}
+}
+
+// ═══════════════════════════════════════
+// HOME SCREEN
+// ═══════════════════════════════════════
+function renderHome(){
+  var d=dayNum();
+  document.getElementById('msDay').textContent=Math.min(d,80);
+  document.getElementById('msCaught').textContent=caughtN();
+  document.getElementById('msXp').textContent=G.xp;
+  document.getElementById('msStreak').textContent=G.streak||0;
+  document.getElementById('cdDays').textContent=daysLeft();
+  document.getElementById('hMascot').innerHTML=mon('mc',78);
+  var tot=ALL_TOPICS.length,done=caughtN(),pct=tot?Math.round(done/tot*100):0;
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('progTxt').textContent=done+'/'+tot;
+  renderBadges();
+  renderTasks(d);
+}
+
+function renderBadges(){
+  var row=document.getElementById('badgesRow');row.innerHTML='';
+  ZONES.forEach(function(z){
+    var allDone=z.topics.every(function(t){return G.caught[t.id]||G.skipped[t.id];});
+    var bDone=!!G.caught[z.boss.id];
+    var earned=allDone&&bDone;
+    var wrap=document.createElement('div');wrap.style.textAlign='center';
+    wrap.innerHTML='<div class="badge'+(earned?' on':'')+'">'+z.badge+'</div><div class="badge-lbl">'+z.badgeName+'</div>';
+    row.appendChild(wrap);
+  });
+}
+
+function renderTasks(d){
+  var tasks=DAILY_MS.filter(function(m){return m.day===d;});
+  if(!tasks.length)tasks=DAILY_MS.filter(function(m){return m.day>=d&&!G.done[m.day+'_'+m.s];}).slice(0,4);
+  var con=document.getElementById('todayTasks');
+  if(!tasks.length){con.innerHTML='<div style="font-family:var(--FB);font-size:16px;color:var(--mu);text-align:center;padding:12px">All caught up! Keep revising ✓</div>';return;}
+  con.innerHTML=tasks.map(function(m){
+    var key=m.day+'_'+m.s;var done=!!G.done[key];
+    var z=ZONES.find(function(z){return z.id===m.s;});var col=z?z.border:'#aaa';
+    return '<div class="tc'+(done?' done':'')+'" data-key="'+key+'">'
+      +'<div class="tc-chk">'+(done?'✓':'')+'</div>'
+      +'<div class="tc-body"><div class="tc-txt" style="color:'+(done?'var(--mu)':col)+'">'+m.t+'</div>'
+      +'<div class="tc-meta">Day '+m.day+' · '+(z?z.name:'?')+' · '+m.m+'</div></div>'
+      +(m.hot?'<div class="tc-hot">★ HOT</div>':m.opt?'<div class="tc-opt">SKIP?</div>':'')+
+    '</div>';
+  }).join('');
+  con.querySelectorAll('.tc').forEach(function(el){
+    el.addEventListener('click',function(){toggleTask(el.dataset.key);});
+  });
+}
+
+function toggleTask(key){
+  G.done[key]=!G.done[key];
+  if(G.done[key]){G.xp+=10;snd('menu');}
+  var today=new Date().toDateString();
+  if(G.lastTick!==today){var yd=new Date();yd.setDate(yd.getDate()-1);G.streak=(G.lastTick===yd.toDateString()?(G.streak||0)+1:1);G.lastTick=today;}
+  save();renderHome();
+  toast(G.done[key]?'✓ Task done! +10 XP':'Task unchecked');
+}
+
+// ═══════════════════════════════════════
+// MAP
+// ═══════════════════════════════════════
+var TILE=32,mapCanvas=null,mapCtx=null,mapAnim=null,lastF=0;
+var player={x:7,y:5,frame:0};var mapKeys={};
+
+function initMap(){
+  mapCanvas=document.getElementById('mapCanvas');
+  mapCtx=mapCanvas.getContext('2d');
+  mapCanvas.addEventListener('click',onMapClick);
+  mapCanvas.addEventListener('touchend',function(e){
+    e.preventDefault();
+    var t=e.changedTouches[0];
+    onMapClick({clientX:t.clientX,clientY:t.clientY});
+  },{passive:false});
+  window.addEventListener('keydown',function(e){mapKeys[e.key]=true;});
+  window.addEventListener('keyup',function(e){delete mapKeys[e.key];});
+}
+
+function resizeMap(){
+  if(!mapCanvas)return;
+  mapCanvas.width=mapCanvas.offsetWidth;
+  mapCanvas.height=mapCanvas.offsetHeight;
+}
+
+function startMapLoop(){
+  if(!mapCanvas){initMap();}
+  resizeMap();
+  if(mapAnim){cancelAnimationFrame(mapAnim);mapAnim=null;}
+  function loop(ts){
+    if(!document.getElementById('owScreen').classList.contains('on')){mapAnim=null;return;}
+    if(ts-lastF>120){lastF=ts;player.frame=(player.frame+1)%4;handleMapKeys();}
+    drawMap();
+    mapAnim=requestAnimationFrame(loop);
+  }
+  mapAnim=requestAnimationFrame(loop);
+}
+
+function handleMapKeys(){
+  var moved=false;
+  if(mapKeys['ArrowLeft']||mapKeys['a']){player.x=Math.max(0,player.x-1);moved=true;}
+  if(mapKeys['ArrowRight']||mapKeys['d']){player.x=Math.min(15,player.x+1);moved=true;}
+  if(mapKeys['ArrowUp']||mapKeys['w']){player.y=Math.max(0,player.y-1);moved=true;}
+  if(mapKeys['ArrowDown']||mapKeys['s']){player.y=Math.min(9,player.y+1);moved=true;}
+  if(moved&&player.frame===0)snd('walk');
+}
+
+function onMapClick(e){
+  var rect=mapCanvas.getBoundingClientRect();
+  var cx=e.clientX-rect.left,cy=e.clientY-rect.top;
+  var cw=mapCanvas.width,ch=mapCanvas.height;
+  var ox=(cw-16*TILE)/2,oy=(ch-10*TILE)/2;
+  var tx=Math.floor((cx-ox)/TILE),ty=Math.floor((cy-oy)/TILE);
+  ZONES.forEach(function(z){
+    if(tx>=z.mapX&&tx<z.mapX+z.mapW&&ty>=z.mapY&&ty<z.mapY+z.mapH){
+      snd('battle');enterZone(z.id);
+    }
+  });
+}
+
+function drawMap(){
+  if(!mapCtx||!mapCanvas)return;
+  var cw=mapCanvas.width,ch=mapCanvas.height;
+  var ox=(cw-16*TILE)/2,oy=(ch-10*TILE)/2;
+  mapCtx.fillStyle='#060d06';mapCtx.fillRect(0,0,cw,ch);
+  for(var x=0;x<16;x++){for(var y=0;y<10;y++){
+    mapCtx.fillStyle=(x+y)%2===0?'#0c1a0c':'#0f1e0f';
+    mapCtx.fillRect(ox+x*TILE,oy+y*TILE,TILE,TILE);
+  }}
+  ZONES.forEach(function(z){
+    var caught=z.topics.filter(function(t){return G.caught[t.id];}).length;
+    var total=z.topics.length;
+    mapCtx.fillStyle=z.color;
+    mapCtx.fillRect(ox+z.mapX*TILE,oy+z.mapY*TILE,z.mapW*TILE,z.mapH*TILE);
+    mapCtx.strokeStyle=z.border;mapCtx.lineWidth=3;
+    mapCtx.strokeRect(ox+z.mapX*TILE,oy+z.mapY*TILE,z.mapW*TILE,z.mapH*TILE);
+    mapCtx.fillStyle=z.border;mapCtx.font='bold 8px monospace';mapCtx.textAlign='center';
+    var lines=z.name.split(' ');
+    lines.forEach(function(l,i){mapCtx.fillText(l,ox+(z.mapX+z.mapW/2)*TILE,oy+(z.mapY+z.mapH/2)*TILE-6+i*13);});
+    mapCtx.fillStyle='#1a1a1a';
+    mapCtx.fillRect(ox+(z.mapX+.4)*TILE,oy+(z.mapY+z.mapH-.65)*TILE,(z.mapW-.8)*TILE,6);
+    mapCtx.fillStyle=z.border;
+    mapCtx.fillRect(ox+(z.mapX+.4)*TILE,oy+(z.mapY+z.mapH-.65)*TILE,(z.mapW-.8)*TILE*caught/Math.max(total,1),6);
+    if(G.caught[z.boss.id]){mapCtx.fillStyle='#FFD700';mapCtx.font='13px monospace';mapCtx.fillText('★',ox+(z.mapX+z.mapW-.7)*TILE,oy+(z.mapY+.8)*TILE);}
+    var allDone=z.topics.every(function(t){return G.caught[t.id]||G.skipped[t.id];});
+    if(allDone&&G.caught[z.boss.id]){mapCtx.shadowColor=z.border;mapCtx.shadowBlur=10;mapCtx.strokeRect(ox+z.mapX*TILE,oy+z.mapY*TILE,z.mapW*TILE,z.mapH*TILE);mapCtx.shadowBlur=0;}
+  });
+  var px=ox+player.x*TILE,py=oy+player.y*TILE,f=player.frame%2;
+  mapCtx.fillStyle='rgba(0,0,0,.35)';mapCtx.beginPath();mapCtx.ellipse(px+TILE/2,py+TILE*.88,11,5,0,0,Math.PI*2);mapCtx.fill();
+  mapCtx.fillStyle='#f5c5a0';mapCtx.fillRect(px+11,py+3,12,11);
+  mapCtx.fillStyle='#2244aa';mapCtx.fillRect(px+9,py+13,14,11);
+  mapCtx.fillStyle='#1a1a33';mapCtx.fillRect(px+9,py+23,6,7+f);mapCtx.fillRect(px+17,py+23,6,7+(1-f));
+  mapCtx.fillStyle='#333';mapCtx.fillRect(px+13,py+6,3,3);mapCtx.fillRect(px+18,py+6,3,3);
+}
+
+// ═══════════════════════════════════════
+// BATTLE
+// ═══════════════════════════════════════
+function enterZone(zId){
+  var z=ZONES.find(function(z){return z.id===zId;});if(!z)return;
+  var next=z.topics.find(function(t){return !G.caught[t.id]&&!G.skipped[t.id];});
+  if(next){startBattle(next,z,false);return;}
+  if(!G.caught[z.boss.id]){startBattle(z.boss,z,true);return;}
+  toast('✅ '+z.name+' complete! Badge earned!');snd('badge');
+}
+
+function quickBattle(){
+  for(var i=0;i<ZONES.length;i++){
+    var z=ZONES[i];
+    var next=z.topics.find(function(t){return !G.caught[t.id]&&!G.skipped[t.id];});
+    if(next){snd('battle');startBattle(next,z,false);return;}
+    if(!G.caught[z.boss.id]){snd('boss');startBattle(z.boss,z,true);return;}
+  }
+  toast('🎉 All topics caught! Ready for June 2026!');snd('levelup');
+}
+
+var B={topic:null,zone:null,boss:false,qs:[],qi:0,correct:0,need:3,ehp:100,php:100,ans:false};
+
+function startBattle(topic,zone,isBoss){
+  B={topic:topic,zone:zone,boss:isBoss||!!topic.isBoss,qs:topic.qs.slice(),qi:0,correct:0,
+     need:(isBoss||topic.isBoss)?5:3,ehp:100,php:100,ans:false};
+  showScreen('battle');
+  document.getElementById('btlTitle').textContent=topic.name.toUpperCase();
+  document.getElementById('eName').textContent=topic.name.toUpperCase();
+  document.getElementById('eSpr').innerHTML=mon(topic.id,88,false);
+  document.getElementById('pSpr').innerHTML=playerSvg();
+  document.getElementById('btlBg').style.background='linear-gradient(180deg,#0a0a22 0%,'+zone.color+'99 60%,'+zone.color+' 100%)';
+  setHp('eHp',100);setHp('pHp',100);updateXpBar();
+  document.getElementById('skipRow').style.display=(topic.opt||topic.optional)?'block':'none';
+  if(B.boss)snd('boss');
+  var msg=B.boss?('⚠ BOSS BATTLE!\n'+topic.name+'\nAnswer all 5 to defeat it!'):(topic.icon||'📚')+' Wild '+topic.name+' appeared!\nAnswer '+B.need+' correctly to catch it!';
+  showDialog(msg,true,function(){showQ();});
+}
+
+function showQ(){
+  if(B.correct>=B.need){doCatch();return;}
+  if(B.php<=0){battleFail();return;}
+  if(B.qi>=B.qs.length)B.qi=0;
+  var q=B.qs[B.qi];B.ans=false;
+  var left=B.need-B.correct;
+  document.getElementById('dlgQn').textContent='Q'+(B.qi+1)+' · Need '+left+' more · '+B.correct+'/'+B.need+' done';
+  document.getElementById('btlHdr').textContent=B.correct+'/'+B.need;
+  document.getElementById('dlgTxt').textContent=q.q;
+  var grid=document.getElementById('optsGrid');grid.innerHTML='';
+  var labels=['A','B','C','D'];
+  // Options A B C from question
+  for(var i=0;i<Math.min(3,q.o.length);i++){
+    var d=makeOpt(labels[i],q.o[i],i,q.a,grid);
+    grid.appendChild(d);
+  }
+  // Option D — 4th answer if exists, else FLEE
+  if(q.o.length>=4){
+    grid.appendChild(makeOpt('D',q.o[3],3,q.a,grid));
+  } else {
+    var flee=document.createElement('div');
+    flee.className='opt';
+    flee.style.background='var(--r1)';flee.style.borderColor='var(--r3)';
+    flee.innerHTML='<span class="opt-k" style="color:var(--r4)">D</span><span class="opt-t" style="color:var(--r4)">✕ FLEE battle</span>';
+    flee.addEventListener('click',function(){openFlee();});
+    grid.appendChild(flee);
+  }
+  document.getElementById('skipRow').style.display=(B.topic&&(B.topic.opt||B.topic.optional))?'block':'none';
+}
+
+function makeOpt(lbl,txt,idx,correctIdx,grid){
+  var d=document.createElement('div');
+  d.className='opt';
+  d.innerHTML='<span class="opt-k">'+lbl+'</span><span class="opt-t">'+txt+'</span>';
+  d.addEventListener('click',function(){pickAnswer(idx,correctIdx,d,grid);});
+  return d;
+}
+
+function pickAnswer(chosen,correct,btn,grid){
+  if(B.ans)return;B.ans=true;
+  grid.querySelectorAll('.opt').forEach(function(o){o.onclick=null;o.removeEventListener('click',o._handler);});
+  if(chosen===correct){
+    btn.classList.add('ok');B.correct++;
+    B.ehp=Math.max(0,B.ehp-(B.boss?20:34));setHp('eHp',B.ehp);
+    var msgs=['⚡ Correct!','✓ Right answer!','Great! Keep going!','Spot on! ★'];
+    document.getElementById('dlgTxt').textContent=msgs[Math.floor(Math.random()*msgs.length)];
+    flashBg('#0a2a0a');snd('correct');spawnSparkles();
+  } else {
+    btn.classList.add('ng');
+    var corBtn=grid.querySelectorAll('.opt')[correct];
+    if(corBtn)corBtn.classList.add('ok');
+    B.php=Math.max(0,B.php-(B.boss?25:30));setHp('pHp',B.php);
+    document.getElementById('dlgTxt').textContent='✗ Wrong! Correct: '+B.qs[B.qi].o[correct];
+    flashBg('#2a0808');snd('wrong');
+  }
+  B.qi++;
+  setTimeout(function(){
+    if(B.correct>=B.need)doCatch();
+    else if(B.php<=0)battleFail();
+    else showQ();
+  },1500);
+}
+
+function spawnSparkles(){
+  var scene=document.querySelector('.btl-scene');
+  ['⭐','✨','💫','⚡'].forEach(function(s,i){
+    var el=document.createElement('div');el.className='sparkle';el.textContent=s;
+    el.style.cssText='left:'+(20+Math.random()*60)+'%;top:'+(10+Math.random()*40)+'%;animation-delay:'+i*.1+'s;z-index:30;position:absolute;pointer-events:none;font-size:20px;animation:sp .8s ease-out '+i*.1+'s forwards;';
+    scene.appendChild(el);setTimeout(function(){el.remove();},1000);
+  });
+}
+
+function showDialog(text,clickable,cb){
+  document.getElementById('dlgQn').textContent='';
+  document.getElementById('dlgTxt').textContent=text;
+  document.getElementById('optsGrid').innerHTML='';
+  document.getElementById('skipRow').style.display='none';
+  if(cb){
+    var el=document.getElementById('dlgBox');
+    function handler(){el.removeEventListener('click',handler);cb();}
+    setTimeout(function(){el.addEventListener('click',handler);},400);
+    setTimeout(handler,2200);
+  }
+}
+
+function setHp(id,pct){
+  var el=document.getElementById(id);if(!el)return;
+  el.style.width=pct+'%';
+  el.style.background=pct>50?'var(--hg)':pct>20?'var(--hy)':'var(--hr)';
+}
+function flashBg(color){
+  var el=document.getElementById('btlBg');el.style.background=color;
+  setTimeout(function(){el.style.background='linear-gradient(180deg,#0a0a22 0%,'+B.zone.color+'99 60%,'+B.zone.color+' 100%)';},220);
+}
+function updateXpBar(){
+  var p=Math.min(100,G.xp%100);
+  document.getElementById('xpFill').style.width=p+'%';
+  document.getElementById('xpVal').textContent=G.xp+' XP';
+}
+
+function doCatch(){
+  var cl=document.getElementById('catchLayer');cl.classList.add('on');
+  document.getElementById('catchIc').textContent='🎯';
+  document.getElementById('catchTxt').textContent='Catching '+B.topic.name+'...';
+  snd('catch');
+  setTimeout(function(){
+    document.getElementById('catchIc').textContent='✅';
+    document.getElementById('catchTxt').textContent=(B.topic.icon||'✓')+' '+B.topic.name+'\nADDED TO DEX!';
+    snd('levelup');
+  },900);
+  setTimeout(function(){
+    cl.classList.remove('on');
+    showResult(true);
+  },2300);
+  G.caught[B.topic.id]=true;G.xp+=B.boss?200:50;save();
+  // badge check
+  var z=ZONES.find(function(z){return z.id===B.zone.id;});
+  if(z){
+    var allT=z.topics.every(function(t){return G.caught[t.id]||G.skipped[t.id];});
+    if(allT&&G.caught[z.boss.id]){
+      setTimeout(function(){snd('badge');toast('🏆 '+z.badgeName+' EARNED!');},2600);
+    }
+  }
+}
+
+function battleFail(){snd('flee');showResult(false);}
+
+function showResult(won){
+  showScreen('result');
+  var xp=B.boss?200:50;
+  if(won){
+    document.getElementById('resIc').textContent=B.boss?'👑':'🎉';
+    document.getElementById('resTtl').textContent=B.boss?'BOSS DEFEATED!':'TOPIC CAUGHT!';
+    document.getElementById('resTtl').style.color='#FFD700';
+    document.getElementById('resXp').textContent='+'+xp+' XP';
+    document.getElementById('resMsg').textContent=B.boss?(B.zone.name+' conquered! '+B.zone.badgeName+' earned!'):(B.topic.icon||'✓')+' '+B.topic.name+' in your Dex!\n'+B.correct+'/'+B.need+' correct.';
+    document.getElementById('btnResult').textContent='CONTINUE ►';
+  } else {
+    document.getElementById('resIc').textContent='💀';
+    document.getElementById('resTtl').textContent='DEFEATED...';
+    document.getElementById('resTtl').style.color='#cc2222';
+    document.getElementById('resXp').textContent='';
+    document.getElementById('resMsg').textContent=B.topic.name+' was too strong!\nStudy this topic and try again.';
+    document.getElementById('btnResult').textContent='TRY AGAIN ►';
+  }
+  updateXpBar();
+}
+
+// Flee
+function openFlee(){snd('back');document.getElementById('fleeBox').classList.add('on');}
+function closeFlee(){document.getElementById('fleeBox').classList.remove('on');snd('menu');}
+function doFlee(){document.getElementById('fleeBox').classList.remove('on');snd('flee');showScreen('home');}
+
+// Skip
+function doSkip(){
+  var t=B.topic;if(!t||(!(t.opt)&&!(t.optional))){toast('Cannot skip this topic');return;}
+  if(G.skipped[t.skipPair]){toast('Cannot skip — paired topic already skipped!');return;}
+  G.skipped[t.id]=true;G.caught[t.id]='skip';save();snd('back');toast('⏩ '+t.name+' skipped');showScreen('home');
+}
+
+// ═══════════════════════════════════════
+// DEX
+// ═══════════════════════════════════════
+function renderDex(){
+  var grid=document.getElementById('dexGrid');grid.innerHTML='';
+  var n=1;
+  document.getElementById('dexCount').textContent=caughtN()+'/'+ALL_TOPICS.length;
+  ZONES.forEach(function(zone){
+    zone.topics.forEach(function(t){
+      var caught=G.caught[t.id];var skip=caught==='skip';
+      var d=document.createElement('div');
+      d.className='dc'+(caught&&!skip?' caught':'')+(skip?' skipped':'');
+      d.innerHTML='<div class="dc-num">#'+String(n).padStart(3,'0')+'</div>'
+        +'<div style="text-align:center">'+mon(t.id,54,!!caught)+'</div>'
+        +'<div class="dc-name">'+(t.icon||'📚')+' '+t.name+'</div>'
+        +'<div class="dc-st" style="color:'+(caught&&!skip?zone.border:skip?'#555':'#333')+'">'+(caught&&!skip?'✓ CAUGHT':skip?'SKIPPED':'???')+'</div>';
+      d.addEventListener('click',function(){
+        if(skip){toast('Topic skipped');return;}
+        snd('battle');enterZone(zone.id);
+      });
+      grid.appendChild(d);n++;
+    });
+    var boss=zone.boss,bc=G.caught[boss.id];
+    var bd=document.createElement('div');
+    bd.className='dc'+(bc?' boss-c':'');bd.style.borderColor=bc?'#FFD700':'#1a1a0a';
+    bd.innerHTML='<div class="dc-num">BOSS</div>'
+      +'<div style="text-align:center">'+mon(boss.id,54,!!bc)+'</div>'
+      +'<div class="dc-name">👑 '+boss.name+'</div>'
+      +'<div class="dc-st" style="color:'+(bc?'#FFD700':'#444')+'">'+(bc?'★ DEFEATED':'LOCKED')+'</div>';
+    bd.addEventListener('click',function(){if(!bc){snd('boss');startBattle(boss,zone,true);}});
+    grid.appendChild(bd);n++;
+  });
+}
+
+// ═══════════════════════════════════════
+// PROF OAK AI
+// ═══════════════════════════════════════
+var oakB64=null;
+
+function resetOak(){
+  oakB64=null;
+  document.getElementById('oakImg').style.display='none';
+  document.getElementById('oakAskBtn').style.display='none';
+  document.getElementById('oakAns').style.display='none';
+  document.getElementById('oakLoading').style.display='none';
+  document.getElementById('fileInput').value='';
+  snd('oak');
+}
+
+document.getElementById('fileInput').addEventListener('change',function(){
+  var file=this.files[0];if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    oakB64=e.target.result.split(',')[1];
+    var img=document.getElementById('oakImg');
+    img.src=e.target.result;img.style.display='block';
+    document.getElementById('oakAskBtn').style.display='block';
+    document.getElementById('oakAns').style.display='none';
+    toast('📸 Photo loaded! Tap ASK OAK');snd('menu');
+  };
+  reader.readAsDataURL(file);
+});
+
+async function askOak(){
+  if(!oakB64){toast('Please upload a photo first');return;}
+  snd('oak');
+  document.getElementById('oakLoading').style.display='block';
+  document.getElementById('oakAns').style.display='none';
+  document.getElementById('oakAskBtn').style.display='none';
+  try{
+    var res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',max_tokens:1000,
+        system:'You are Professor Oak, a friendly CMA Inter exam tutor. The student uploaded a photo of a CMA Inter exam question. 1) Identify topic and subject. 2) Solve step by step with full workings. 3) Explain the key concept in 2-3 simple sentences. 4) For Tax and Law questions, cite section numbers. Finance Act 2025 applies. Keep response concise and exam-focused.',
+        messages:[{role:'user',content:[
+          {type:'image',source:{type:'base64',media_type:'image/jpeg',data:oakB64}},
+          {type:'text',text:'CMA Inter exam question. Please solve step by step and explain the concept. Finance Act 2025 applicable for tax questions.'}
+        ]}]
+      })
+    });
+    var data=await res.json();
+    var txt=(data.content&&data.content[0]&&data.content[0].text)||'Prof. Oak could not read the question clearly. Try a clearer photo.';
+    document.getElementById('oakAnsTxt').textContent=txt;
+    document.getElementById('oakAns').style.display='block';
+    snd('levelup');toast('🎓 Prof. Oak answered!');
+  }catch(err){
+    document.getElementById('oakAnsTxt').textContent='Prof. Oak is unavailable right now. Check your internet and try again. You can also visit claude.ai directly and upload your question there.';
+    document.getElementById('oakAns').style.display='block';
+  }
+  document.getElementById('oakLoading').style.display='none';
+  document.getElementById('oakAskBtn').style.display='block';
+}
+
+var QA_PROMPTS=[
+  'Explain BEP analysis step by step for CMA Inter Cost Accounting. Include formula and a simple example.',
+  'Explain GST Input Tax Credit rules for CMA Inter Indirect Tax. Which credits are blocked under Section 17(5)?',
+  'Explain standard costing variance analysis for CMA Inter Cost Accounting with a simple numerical example.',
+  'Explain Section 54 capital gains exemption for CMA Inter Direct Tax. Finance Act 2025 applicable.',
+  'Key provisions of Companies Act 2013 that always appear in CMA Inter Laws exam — list with section numbers.',
+  'Explain amalgamation AS 14 — difference between purchase method and pooling of interests for CMA Inter FA.',
+];
+
+async function quickAsk(idx){
+  snd('oak');
+  document.getElementById('oakLoading').style.display='block';
+  document.getElementById('oakAns').style.display='none';
+  try{
+    var res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',max_tokens:800,
+        system:'You are Professor Oak, a friendly CMA Inter exam tutor. Give a concise, exam-focused answer. Use simple language. Include examples. Finance Act 2025 applicable for tax questions.',
+        messages:[{role:'user',content:QA_PROMPTS[idx]}]
+      })
+    });
+    var data=await res.json();
+    var txt=(data.content&&data.content[0]&&data.content[0].text)||'Please try again.';
+    document.getElementById('oakAnsTxt').textContent=txt;
+    document.getElementById('oakAns').style.display='block';
+    snd('levelup');toast('🎓 Prof. Oak answered!');
+  }catch(err){
+    document.getElementById('oakAnsTxt').textContent='Prof. Oak is unavailable. Check internet and try again or visit claude.ai.';
+    document.getElementById('oakAns').style.display='block';
+  }
+  document.getElementById('oakLoading').style.display='none';
+}
+
+// ═══════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════
+var tT=null;
+function toast(msg){
+  var el=document.getElementById('toast');el.textContent=msg;el.classList.add('on');
+  if(tT)clearTimeout(tT);
+  tT=setTimeout(function(){el.classList.remove('on');},3500);
+}
+
+// ═══════════════════════════════════════
+// STARS
+// ═══════════════════════════════════════
+function initStars(){
+  var con=document.getElementById('stars');
+  for(var i=0;i<65;i++){
+    var s=document.createElement('div');s.className='star';
+    var sz=Math.random()*2.5+.5;
+    s.style.cssText='left:'+Math.random()*100+'%;top:'+Math.random()*100+'%;width:'+sz+'px;height:'+sz+'px;animation:tw '+(Math.random()*2+1)+'s infinite;animation-delay:'+Math.random()*2+'s;';
+    con.appendChild(s);
+  }
+}
+
+// ═══════════════════════════════════════
+// WIRE ALL BUTTONS (safe, no inline handlers)
+// ═══════════════════════════════════════
+function wireButtons(){
+  // Home
+  document.getElementById('btnMap').addEventListener('click',function(){snd('menu');showScreen('ow');});
+  document.getElementById('btnDex').addEventListener('click',function(){snd('menu');showScreen('dex');});
+  document.getElementById('btnQuick').addEventListener('click',function(){snd('menu');quickBattle();});
+  document.getElementById('btnOak').addEventListener('click',function(){snd('menu');showScreen('oak');});
+  // Overworld
+  document.getElementById('btnOwBack').addEventListener('click',function(){snd('back');showScreen('home');});
+  document.getElementById('btnOwDex').addEventListener('click',function(){snd('menu');showScreen('dex');});
+  document.getElementById('btnOwHome').addEventListener('click',function(){snd('back');showScreen('home');});
+  document.getElementById('btnOwDex2').addEventListener('click',function(){snd('menu');showScreen('dex');});
+  document.getElementById('btnOwQuick').addEventListener('click',function(){snd('menu');quickBattle();});
+  document.getElementById('btnOwOak').addEventListener('click',function(){snd('menu');showScreen('oak');});
+  // Battle
+  document.getElementById('btnBtlBack').addEventListener('click',function(){openFlee();});
+  document.getElementById('skipBtn').addEventListener('click',function(){doSkip();});
+  // Flee box
+  document.getElementById('btnFleeYes').addEventListener('click',function(){doFlee();});
+  document.getElementById('btnFleeNo').addEventListener('click',function(){closeFlee();});
+  // Dex
+  document.getElementById('btnDexBack').addEventListener('click',function(){snd('back');showScreen('home');});
+  // Result
+  document.getElementById('btnResult').addEventListener('click',function(){snd('menu');showScreen('home');});
+  // Oak
+  document.getElementById('btnOakBack').addEventListener('click',function(){snd('back');showScreen('home');});
+  document.getElementById('oakUpload').addEventListener('click',function(){document.getElementById('fileInput').click();});
+  document.getElementById('oakAskBtn').addEventListener('click',function(){askOak();});
+  // Oak quick ask
+  for(var i=0;i<6;i++){
+    (function(idx){
+      document.getElementById('qa'+idx).addEventListener('click',function(){quickAsk(idx);});
+    })(i);
+  }
+  // Mute
+  document.getElementById('muteBtn').addEventListener('click',function(){toggleMute();});
+}
+
+// ═══════════════════════════════════════
+// BOOT
+// ═══════════════════════════════════════
+window.addEventListener('load',function(){
+  initStars();
+  wireButtons();
+  renderHome();
+  // Audio unlock on first touch
+  document.addEventListener('touchstart',function(){
+    var ac=getAC();if(ac&&ac.state==='suspended')ac.resume();
+  },{once:true,passive:true});
+  document.addEventListener('click',function(){
+    var ac=getAC();if(ac&&ac.state==='suspended')ac.resume();
+  },{once:true});
+  // Prevent double-tap zoom
+  var lt=0;
+  document.addEventListener('touchend',function(e){
+    var n=Date.now();if(n-lt<300)e.preventDefault();lt=n;
+  },{passive:false});
+  // Handle orientation
+  window.addEventListener('resize',function(){
+    if(mapCanvas&&document.getElementById('owScreen').classList.contains('on')){resizeMap();}
+  });
+});
+</script>
+</body>
+</html>
